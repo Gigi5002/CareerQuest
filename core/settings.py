@@ -72,11 +72,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'careerquest',  # Имя вашей базы данных
+        'USER': 'careerquest',      # Имя вашего пользователя
+        'PASSWORD': 'careerquest',  # Ваш пароль
+        'HOST': 'localhost',   # Хост, на котором работает PostgreSQL
+        'PORT': '5432',            # Порт (по умолчанию 5432)
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

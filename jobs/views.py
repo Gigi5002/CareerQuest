@@ -1,12 +1,13 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from .models import Vacancy, Response, Chosen
+from .models import Vacancy,Chosen
+from users.models import UserType
 from .serializers import (
     VacancyListSerializer,
-    ResponseCreateSerializer, VacancyCreateSerializer,
+    ResponseSerializer, VacancyCreateSerializer,
     ChosenSerializer
 )
 
+from rest_framework.exceptions import PermissionDenied, NotFound
 from .paginations import VacancyPagination
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -24,29 +25,38 @@ class VacancyListView(generics.ListAPIView):
 
 
 class VacancyCreateView(generics.CreateAPIView):
-    queryset = Vacancy.objects.all()
     serializer_class = VacancyCreateSerializer
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.user_type == UserType.employers:
+            serializer.save(employer=user)
+        else:
+            raise PermissionDenied("Only employers can create vacancies")
 
 
 class ResponseCreateView(generics.CreateAPIView):
-    queryset = Response.objects.all()
-    serializer_class = ResponseCreateSerializer
-    # queryset = Response.objects.all()
-    # serializer_class = ResponseSerializer
-    # permission_classes = [IsAuthenticated]
-    #
-    # def perform_create(self, serializer):
-    #     vacancy_id = self.request.data.get('vacancy')
-    #     vacancy = Vacancy.objects.get(id=vacancy_id)
-    #     serializer.save(user=self.request.user, vacancy=vacancy)
+    serializer_class = ResponseSerializer
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if user.user_type == UserType.job_seeker:
+            serializer.save(user=user)
+        else:
+            raise PermissionDenied("На вакансии могут откликаться только соискатели работы")
 
 
 class ChosenListCreateView(generics.ListCreateAPIView):
-    queryset = Chosen.objects.all()
     serializer_class = ChosenSerializer
-    # permission_classes = [IsAuthenticated]
 
-    # def perform_create(self, serializer):
-    #     vacancy_id = self.request.data.get('vacancy')
-    #     vacancy = Vacancy.objects.get(id=vacancy_id)
-    #     serializer.save(user=self.request.user, vacancy=vacancy)
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_authenticated:
+            raise PermissionDenied("You must be logged in to view this content")
+        queryset = Chosen.objects.filter(user=user)
+        if not queryset.exists():
+            raise NotFound("No chosen items found for this user")
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

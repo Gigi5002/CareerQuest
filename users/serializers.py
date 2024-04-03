@@ -1,4 +1,4 @@
-from .models import Employer, JobSeeker, User, UserType
+from .models import Employer, JobSeeker
 from rest_framework import serializers
 
 
@@ -16,3 +16,15 @@ class JobSeekerListCreateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ProfileEmployerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Employer
+        fields = '__all__'
+
+
+class ProfileJobSeekerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = JobSeeker
+        fields = '__all__'

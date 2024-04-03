@@ -69,6 +69,12 @@ class VacancyListSerializer(serializers.ModelSerializer):
                   )
 
 
+class ResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Response
+        fields = '__all__'
+
+
 class ResponseCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Response
