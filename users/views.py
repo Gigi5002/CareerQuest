@@ -1,6 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import Response
 from .models import Employer, JobSeeker
+from users.models import Employer
 from rest_framework import generics, status
 from .serializers import (
     EmployerListCreateSerializer, JobSeekerListCreateSerializer,

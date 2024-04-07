@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from users.models import Employer
 from .choices import IndustryCh, CategoryCh, SpecialityCh, ExperienceCh
 
 User = get_user_model()
@@ -97,28 +98,6 @@ class Experience(models.Model):
     class Meta:
         verbose_name = "Уровень опыта"
         verbose_name_plural = "Уровени опыта"
-
-
-class Employer(models.Model):
-    company_name = models.CharField(
-        max_length=250,
-        verbose_name='Название компании'
-    )
-    industry = models.ManyToManyField(
-        Industry,
-        verbose_name='Сфера деятельности'
-    )
-    location = models.CharField(
-        max_length=500,
-        verbose_name='Место нахождение компании'
-    )
-
-    def __str__(self):
-        return self.company_name
-
-    class Meta:
-        verbose_name = "Компания"
-        verbose_name_plural = "Компании"
 
 
 class Vacancy(models.Model):

@@ -1,4 +1,5 @@
 from .models import Employer, JobSeeker
+from users.models import Employer
 from rest_framework import serializers
 
 
