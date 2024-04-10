@@ -1,7 +1,7 @@
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db import models
 
-from jobs.choices import IndustryCh, SpecialityCh
+from .choices import IndustryCh, SpecialityCh
 
 parametersForNull = {
     'null': True,
@@ -30,19 +30,21 @@ class MyUserManager(BaseUserManager):
         user = self.create_user(
             phone_number=phone_number,
             username=username,
-            email=email
+            email=email,
+            password=password  # Добавляем пароль
         )
-        user.is_admin = True
-        user.set_password(password)
+        user.is_superuser = True  # Устанавливаем значение is_superuser
         user.save(using=self._db)
         return user
 
 
 class User(AbstractBaseUser):
+
     user_type = models.PositiveSmallIntegerField(
         choices=UserType.choices,
         default=UserType.job_seeker,
-        verbose_name="Тип пользователя")
+        verbose_name="Тип пользователя"
+    )
     username = models.CharField(
         max_length=255,
         verbose_name="Ф.И.О"
@@ -55,11 +57,11 @@ class User(AbstractBaseUser):
         unique=True,
         verbose_name="Номер телефона"
     )
-    cover = models.ImageField(
-        upload_to="media/cover",
-        verbose_name="Ваше фото",
-        **parametersForNull
-    ),
+    # cover = models.ImageField(
+    #     upload_to="media/cover",
+    #     verbose_name="Ваше фото",
+    #     **parametersForNull
+    # )
     created_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Дата создания"
@@ -79,8 +81,12 @@ class User(AbstractBaseUser):
         default=False,
         verbose_name="Админ"
     )
-    is_stuff = models.BooleanField(
-        default=False
+    is_active = models.BooleanField(
+        default=True
+    )
+    is_staff = models.BooleanField(
+        default=False,
+        verbose_name='Персонал'
     )
 
     class Meta:
@@ -115,7 +121,6 @@ class Employer(User):
         max_length=250,
         verbose_name='Название отрасли',
         choices=IndustryCh,
-        default=None,
         **parametersForNull
     )
     other_industry = models.CharField(
@@ -123,7 +128,6 @@ class Employer(User):
         verbose_name='Название отрасли(другое)',
         **parametersForNull
     )
-
     country = models.CharField(
         verbose_name="Страна",
         max_length=255
@@ -143,15 +147,11 @@ class JobSeeker(User):
         choices=SpecialityCh,
         verbose_name="Укажите свою специальность ",
         max_length=255,
-        default=None,
         ** parametersForNull
         )
-
     other_speciality = models.CharField(
-        choices=SpecialityCh,
         verbose_name="Укажите свою специальность(другое) ",
         max_length=255,
-        default=None,
         ** parametersForNull
         )
 

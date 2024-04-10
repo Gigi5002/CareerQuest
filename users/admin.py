@@ -14,7 +14,7 @@ class EmployerCreationForm(forms.ModelForm):
 
     class Meta:
         model = Employer
-        fields = ('phone_number', 'username', 'email')
+        fields = ('phone_number', 'username', 'email', 'is_active')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -32,21 +32,18 @@ class EmployerCreationForm(forms.ModelForm):
 
 
 class EmployerChangeForm(forms.ModelForm):
-    """A form for updating users. Includes all the fields on
-    the users, but replaces the password field with admin's
-    disabled password hash display field.
-    """
+
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = Employer
-        fields = ('password', 'is_admin')
+        fields = ('password', 'is_admin', 'is_active')
 
 
 class EmployerAdmin(BaseUserAdmin):
     form = EmployerChangeForm
     add_form = EmployerCreationForm
-    list_display = ('username', 'created_date', 'is_active', 'is_admin')
+    list_display = ('username', 'email', 'phone_number', 'is_active', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': (
@@ -54,7 +51,6 @@ class EmployerAdmin(BaseUserAdmin):
             'username',
             'phone_number',
             'email',
-            'is_stuff',
             )}),
         ('Permissions', {'fields': ('is_admin', )}),
     )
@@ -79,7 +75,7 @@ class JobSeekerCreationForm(forms.ModelForm):
 
     class Meta:
         model = JobSeeker
-        fields = ('phone_number', 'username', 'email')
+        fields = ('phone_number', 'username', 'email', 'is_active')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -97,21 +93,18 @@ class JobSeekerCreationForm(forms.ModelForm):
 
 
 class JobSeekerChangeForm(forms.ModelForm):
-    """A form for updating users. Includes all the fields on
-    the users, but replaces the password field with admin's
-    disabled password hash display field.
-    """
+
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = JobSeeker
-        fields = ('password', 'is_admin')
+        fields = ('password', 'is_admin', 'is_active')
 
 
 class JobSeekerAdmin(BaseUserAdmin):
     form = JobSeekerChangeForm
     add_form = JobSeekerCreationForm
-    list_display = ('username', 'created_date', 'is_active', 'is_admin')
+    list_display = ('username', 'email', 'phone_number', 'is_active', 'is_admin')
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': (
@@ -119,7 +112,6 @@ class JobSeekerAdmin(BaseUserAdmin):
             'username',
             'phone_number',
             'email',
-            'is_stuff',
             )}),
         ('Permissions', {'fields': ('is_admin', )}),
     )

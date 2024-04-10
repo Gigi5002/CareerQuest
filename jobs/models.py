@@ -134,12 +134,9 @@ class Vacancy(models.Model):
     published_date = models.DateTimeField(
         auto_now_add=True
     )
-    status = models.PositiveSmallIntegerField(
-        choices=(
-            (1, 'Актуально'),
-            (2, 'Не актуально')
-        ),
-        default=2
+    status = models.BooleanField(
+        default=False,
+        verbose_name='актуально'
     )
     contacts = models.CharField(
         max_length=13,
@@ -152,6 +149,7 @@ class Vacancy(models.Model):
         categories = ', '.join([category.title for category in self.category.all()])
         industries = ', '.join([industry.title for industry in self.industry.all()])
         experiences = ', '.join([experience.title for experience in self.experience.all()])
+
         return f'{specializations}\n {categories}\n {industries}\n {experiences}'
 
     class Meta:
@@ -162,12 +160,12 @@ class Vacancy(models.Model):
 class Response(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name='Пользователь'
     )
     vacancy = models.ForeignKey(
         Vacancy,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name='Выберите вакансию'
     )
     cover_letter = models.TextField(
@@ -191,12 +189,12 @@ class Response(models.Model):
 class Chosen(models.Model):
     user = models.ForeignKey(
         User,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name='Пользователь'
     )
     vacancy = models.ForeignKey(
         Vacancy,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name='Выберите вакансию'
     )
     created_date = models.DateTimeField(
